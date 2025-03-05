@@ -83,11 +83,8 @@ Tab:CreateSlider({
     CurrentValue = 7,
     Flag = "JUMPPOWER",
     Callback = function(jumpHVal)
-	while true do
 		if humanoid then
             humanoid.JumpHeight = jumpHVal
-			wait(0.1)
-        end
 	end
     end,
 })
