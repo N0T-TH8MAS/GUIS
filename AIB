@@ -53,10 +53,13 @@ local Slider = Tab:CreateSlider({
    CurrentValue = 16,
    Flag = "WALKSPEED", 
    Callback = function(Value)
-       local player = game.Players.LocalPlayer
+   while true do
+   local player = game.Players.LocalPlayer
        local character = player.Character or player.CharacterAdded:Wait()
        local humanoid = character:WaitForChild("Humanoid")
 		          humanoid.WalkSpeed = Value
+				  task.wait(0.1)
+   end
    end,
 })
 ------------------------------------------------------------------------------
@@ -80,9 +83,12 @@ Tab:CreateSlider({
     CurrentValue = 7,
     Flag = "JUMPPOWER",
     Callback = function(jumpHVal)
-        if humanoid then
+	while true do
+		if humanoid then
             humanoid.JumpHeight = jumpHVal
+			wait(0.1)
         end
+	end
     end,
 })
 
