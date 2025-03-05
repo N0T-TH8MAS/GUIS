@@ -313,6 +313,6 @@ local Button = Tab:CreateButton({
    Name = "Skip Boiling Death (In Progress)",
    Callback = function()
    local Player = game.Players.LocalPlayer.Character
-   Player:MoveTo(Vector3.new(-657.185546875, 10.7903289794922, 943.837890625))
+   Player:MoveTo(Vector3.new(-671.599976, 212.758911, 943.099976, 1, 0, 0, 0, 1, 0, 0, 0, 1))
    end,
 })
