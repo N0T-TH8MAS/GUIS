@@ -1,0 +1,315 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+   Name = "AIB HACK",
+   Icon = "cable", 
+   LoadingTitle = "AIB HACK",
+   LoadingSubtitle = "by hecker",
+   Theme = Color3.fromRGB(0, 0, 0), 
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, 
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = "AIB HACK", 
+      FileName = "HACK"
+   },
+
+   Discord = {
+      Enabled = false, 
+      Invite = "noinvitelink", 
+      RememberJoins = true 
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+Rayfield:Notify({
+   Title = "AIB Hack",
+   Content = "Made By hecker",
+   Duration = 6.5,
+   Image = "bell",
+})
+
+local Tab = Window:CreateTab("Movement", "Anchor")
+
+local Divider = Tab:CreateDivider()
+local Section = Tab:CreateSection("Movement")
+
+local Slider = Tab:CreateSlider({
+   Name = "Walkspeed",
+   Range = {0, 250},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "WALKSPEED", 
+   Callback = function(Value)
+       local player = game.Players.LocalPlayer
+       local character = player.Character or player.CharacterAdded:Wait()
+       local humanoid = character:WaitForChild("Humanoid")
+		          humanoid.WalkSpeed = Value
+   end,
+})
+------------------------------------------------------------------------------
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local humanoid = nil
+
+local function getHumanoid(character)
+    character = character or LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    return character:WaitForChild("Humanoid")
+end
+
+humanoid = getHumanoid()
+
+Tab:CreateSlider({
+    Name = "JumpPower",
+    Range = {0, 450},
+    Increment = 1,
+    Suffix = "Height",
+    CurrentValue = 7,
+    Flag = "JUMPPOWER",
+    Callback = function(jumpHVal)
+        if humanoid then
+            humanoid.JumpHeight = jumpHVal
+        end
+    end,
+})
+
+LocalPlayer.CharacterAdded:Connect(function(character)
+    humanoid = getHumanoid(character)
+    if jumpHeightSlider then
+        humanoid.JumpHeight = jumpHeightSlider.CurrentValue
+    end
+end)
+
+local Toggle = Tab:CreateToggle({
+    Name = "CFrameFly",
+    CurrentValue = false,
+    Flag = "CFLY", -- Unique identifier for the toggle state
+    Callback = function(state) -- `state` is true when toggle is ON, false when OFF
+        if state then
+            startFlying()
+        else
+            stopFlying()
+        end
+    end
+})
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local flying = false
+local speed = 50
+local bodyVelocity
+local bodyGyro
+
+-- Function to Start Flying
+function startFlying()
+    if flying then return end
+    flying = true
+    
+    -- Create a BodyGyro to keep upright
+    bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.MaxTorque = Vector3.new(400000, 400000, 400000)
+    bodyGyro.CFrame = humanoidRootPart.CFrame
+    bodyGyro.Parent = humanoidRootPart
+
+    -- Create a BodyVelocity to move
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(400000, 400000, 400000)
+    bodyVelocity.Velocity = Vector3.zero
+    bodyVelocity.Parent = humanoidRootPart
+end
+
+-- Function to Stop Flying
+function stopFlying()
+    if not flying then return end
+    flying = false
+
+    if bodyGyro then bodyGyro:Destroy() end
+    if bodyVelocity then bodyVelocity:Destroy() end
+end
+
+-- Handle Movement While Flying
+RunService.RenderStepped:Connect(function()
+    if flying then
+        local direction = Vector3.zero
+
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            direction = direction + humanoidRootPart.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            direction = direction - humanoidRootPart.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            direction = direction - humanoidRootPart.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            direction = direction + humanoidRootPart.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            direction = direction + Vector3.new(0, 1, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            direction = direction - Vector3.new(0, 1, 0)
+        end
+
+        -- Prevent errors if the player isn't pressing any keys
+        if direction.Magnitude > 0 then
+            bodyVelocity.Velocity = direction.Unit * speed
+        else
+            bodyVelocity.Velocity = Vector3.zero
+        end
+    end
+end)
+-------------------------------------------------------------------------------------
+local Toggle = Tab:CreateToggle({
+   Name = "Float Toggle",
+   Default = false,
+   Callback = function(isOn)
+       local player = game.Players.LocalPlayer
+       local character = player.Character or player.CharacterAdded:Wait()
+       local humanoid = character:WaitForChild("Humanoid")
+
+       if isOn then
+           if not isFloating then
+               bodyVelocity = Instance.new("BodyVelocity")
+               bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)  -- Apply a strong force
+               bodyVelocity.Velocity = Vector3.new(0, 50, 0)  -- Set velocity to float upwards
+               bodyVelocity.Parent = character.HumanoidRootPart  -- Attach BodyVelocity to the root part
+               isFloating = true  -- Set floating status to true
+           end
+       else
+           -- Stop floating by removing the BodyVelocity
+           if isFloating then
+               bodyVelocity:Destroy()
+               bodyVelocity = nil
+               isFloating = false  -- Set floating status to false
+           end
+       end
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Sit",
+   Interact = 'Click',
+   Callback = function()
+       local plr = game.Players.LocalPlayer
+       local character = plr.Character or plr.CharacterAdded:Wait()
+       local humanoid = character:WaitForChild("Humanoid")
+       humanoid.Sit = true
+   end,
+})
+
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+				local runService = game:GetService("RunService")
+runService.RenderStepped:Connect(
+                function()
+                    if getgenv().NoClipEnabled and localPlayer.Character then
+                        for _, part in pairs(localPlayer.Character:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                            
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            )
+
+local Toggle = Tab:CreateToggle({
+    Name = "Noclip (Jump after disabling)",
+    CurrentValue = false,
+    Flag = "NOCLIP",
+    Callback = function(Value)
+     getgenv().NoClipEnabled = Value
+	     
+	end})
+
+local InfiniteJumpEnabled = false  -- Track if infinite jump is enabled
+local JumpConnection  -- Store the connection for JumpRequest event
+
+local Toggle = Tab:CreateToggle({
+   Name = "INF Jump",
+   CurrentValue = false,
+   Flag = "INFJUMP", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+      InfiniteJumpEnabled = Value  -- Set InfiniteJumpEnabled based on toggle state
+      
+      -- Disconnect the previous JumpRequest listener if it exists
+      if JumpConnection then
+         JumpConnection:Disconnect()
+      end
+
+      -- If InfiniteJump is enabled, reconnect the listener for JumpRequest
+      if InfiniteJumpEnabled then
+         JumpConnection = game:GetService("UserInputService").JumpRequest:Connect(function()
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid'):ChangeState("Jumping")
+         end)
+      else
+         -- When the toggle is off, disable jumping
+         local humanoid = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+         if humanoid then
+            humanoid.Jumping = false  -- Prevent jumping if toggle is off
+         end
+      end
+   end,
+})
+
+------------------------------------------------------------
+local Tab = Window:CreateTab("Games", "network")
+
+local Button = Tab:CreateButton({
+   Name = "Skip Dead Or Alive",
+   Callback = function()
+   local Player = game.Players.LocalPlayer.Character
+   Player:MoveTo(Vector3.new(1.294301509857178, 5.904763221740723, 42.67050552368164))
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Get Rid Of Horseman (will come back but click again when he does)",
+   Callback = function()
+   game.workspace.Horseman:MoveTo(Vector3.new(-90.8804626464844, 9999.39892578125, 1000.630373001098633))
+   end,
+})
+
+local lighting = game:GetService("Lighting")
+
+local Toggle = Tab:CreateToggle({
+    Name = "Full Bright",
+    CurrentValue = false,
+    Flag = "FULLBRIGHT",
+    Callback = function(Value)
+        if Value then
+            lighting.Brightness = 10 -- Max brightness
+            lighting.ExposureCompensation = 1 -- Adjust exposure for visibility
+        else
+            lighting.Brightness = 1 -- Normal brightness
+            lighting.ExposureCompensation = 0
+        end
+    end
+})
+
+local Button = Tab:CreateButton({
+   Name = "Skip Boiling Death (In Progress)",
+   Callback = function()
+   local Player = game.Players.LocalPlayer.Character
+   Player:MoveTo(Vector3.new(-657.185546875, 10.7903289794922, 943.837890625))
+   end,
+})
