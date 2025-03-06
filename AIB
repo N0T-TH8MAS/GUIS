@@ -310,7 +310,23 @@ local Toggle = Tab:CreateToggle({
 })
 
 local Button = Tab:CreateButton({
-   Name = "Skip Boiling Death (In Progress)",
+   Name = "Skip Boiling Death (Go down the hole)",
+   Callback = function()
+   local Player = game.Players.LocalPlayer.Character
+   Player:MoveTo(Vector3.new(-671.599976, 212.758911, 943.099976, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Skip Hide And Seek (Must Have Wolf First)",
+   Callback = function()
+   local Player = game.Players.LocalPlayer.Character
+   Player:MoveTo(Vector3.new(-671.599976, 212.758911, 943.099976, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Skip Distance",
    Callback = function()
    local Player = game.Players.LocalPlayer.Character
    Player:MoveTo(Vector3.new(-671.599976, 212.758911, 943.099976, 1, 0, 0, 0, 1, 0, 0, 0, 1))
